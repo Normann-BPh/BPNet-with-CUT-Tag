@@ -62,7 +62,7 @@ raw_outputs = False
 random_state = None
 ```
 # Command Line Tools
-If you wish to use the command-line tool to fit and analyse the model use the following commands:
+If you wish to use the command-line tool to fit and analyse the model, use the following commands after providing the paths in all json files:
 ```
 bpnet fit -p training.json
 bpnet predict -p predict.json
