@@ -61,7 +61,7 @@ random_state = None
 name = '{}_Model'.format(TF_to_predict)
 
 
-model = torch.load('{}_report/{}.troch'.format(TF_to_predict,name), weights_only=False)
+model = torch.load('{}_report_n/{}.troch'.format(TF_to_predict,name), weights_only=False)
 
 examples = extract_loci(loci=loci, sequences=sequences, chroms=test_chroms,
                         in_window=in_window, out_window=out_window, max_jitter=max_jitter, min_counts=min_counts,
@@ -94,5 +94,5 @@ Default:
 	random_state=None, verbose=False
 '''
 
-np.savez_compressed('{}_report/{}_ohe.npz'.format(TF_to_predict,TF_to_predict), examples.cpu())
-np.savez_compressed('{}_report/{}_attr.npz'.format(TF_to_predict,TF_to_predict), attribitutions.cpu())
+np.savez_compressed('{}_report_n/{}_ohe.npz'.format(TF_to_predict,TF_to_predict), examples.cpu())
+np.savez_compressed('{}_report_n/{}_attr.npz'.format(TF_to_predict,TF_to_predict), attribitutions.cpu())
