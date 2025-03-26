@@ -38,8 +38,6 @@ python attribute.py
 
 ---
 
----
-
 ### 4. `motifs.py`
 **Purpose**: Find TFBS-motifs based on a trained BPNet-model.
 
@@ -63,11 +61,6 @@ python report.py
 ---
 
 ---
-
-# Using a scheduler.
-If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
-- add 'scheduler' as a variable after 'optimizer' in line 314
-- add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
 
 # The parameters used for training the BPNet model.
 ```
@@ -127,6 +120,11 @@ print_convergence_deltas = False
 raw_outputs = False
 random_state = None
 ```
+# Using a scheduler.
+If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
+- add 'scheduler' as a variable after 'optimizer' in line 314
+- add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
+
 # Command Line Tools
 If you wish to use the command-line tool to fit and analyse the model, use the following commands after providing the paths in all json files:
 ```
@@ -136,4 +134,4 @@ bpnet attribute  -p attribute.json
 modisco motifs -s <path to ohe from attribute> -a <path to attributes for attribute> -n 20000 -o motifs.h5
 modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
-Note that here the scheduler is not implemented. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of you environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
+Note that here the scheduler is not implemented. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of your environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
