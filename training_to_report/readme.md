@@ -67,7 +67,7 @@ If you wish to use the command-line tool to fit and analyse the model, use the f
 bpnet fit -p training.json
 bpnet predict -p predict.json
 bpnet attribute  -p attribute.json
-modisco motifs -s <path to ohe from attribute> -a <path to attributes for attribute> -n 2000 -o motifs.h5
+modisco motifs -s <path to ohe from attribute> -a <path to attributes for attribute> -n 20000 -o motifs.h5
 modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
 Note that here the scheduler is not implemented. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of you environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
