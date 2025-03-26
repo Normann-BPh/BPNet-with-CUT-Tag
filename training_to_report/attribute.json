@@ -1,0 +1,20 @@
+{
+	"batch_size": 128,
+	"in_window": 1002,
+	"out_window": 1000, 
+	"verbose": true, 
+	"chroms": ["chr2", "chr10", "chr17"],
+	"model":"test_model.torch",
+	
+    "sequences": <path to genome fasta-file>,
+    
+    "loci": <path to peak.bed file>,
+	
+	"output": "profile",
+	
+	"ohe_filename": "ohe.npz",
+	"attr_filename": "attr.npz",
+	"n_shuffles":20,
+	"random_state":0,
+	"warning_threshold": 0.001
+}

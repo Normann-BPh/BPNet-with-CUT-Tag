@@ -1,0 +1,38 @@
+{
+    "in_window": 1002,
+    "out_window": 1000,
+    "max_jitter": 100,
+    "min_counts": 0,
+    "max_counts": 99999999,
+    "random_state": 0,
+    "verbose": true,
+    "batch_size": 128,
+
+    "reverse_complement": true,
+
+    "n_filters": 64,
+    "n_layers": 10,
+    "n_outputs": 2,
+    "n_control_tracks": 0,
+    "alpha": 0.1,
+    "profile_output_bias": true,
+    "count_output_bias": true,
+    "name": "test_model",
+
+    "lr": 0.0009,
+
+    "max_epoch": 100,
+    "validation_iter": 200,
+    "early_stopping": 10,
+
+    "training_chroms": ["chr1", "chr3", "chr4", "chr6", "chr7", 
+                        "chr9", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16",
+                        "chr18", "chr19", "chr20", "chr22", "chrX"],
+    "validation_chroms": ["chr5", "chr8", "chr21"],
+
+    "sequences": <path to genome fasta-file>,
+    
+    "loci": <path to peak.bed file>,
+
+    "signals": [<path to positive strand bigwig file>, <path to negative strand bigwig file>]
+}

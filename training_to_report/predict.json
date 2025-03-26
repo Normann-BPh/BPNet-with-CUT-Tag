@@ -1,0 +1,16 @@
+{
+	"batch_size":128,
+	"in_window":1002,
+	"out_window":1000,
+	"verbose":true,
+	"chroms": ["chr2", "chr10", "chr17"],  
+	"model":"test_model.torch",  
+    
+    "sequences": <path to genome fasta-file>,
+    
+    "loci": <path to peak.bed file>,
+	
+	
+	"profile_filename": "y_profile.npz",
+	"counts_filename": "y_counts.npz" 
+}

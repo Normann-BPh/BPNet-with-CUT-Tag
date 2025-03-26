@@ -36,8 +36,8 @@ sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.prima
 a human genome, consistent of A, C, G and T. 
 '''
 
-signals = ['BPNet_files/BigWig_files/no_nans_{}_all_pos.bw'.format(TF_to_train),
-            'BPNet_files/BigWig_files/no_nans_{}_all_neg.bw'.format(TF_to_train)]
+signals = ['BPNet_files/BigWig_files/{}_all_pos.bw'.format(TF_to_train),
+            'BPNet_files/BigWig_files/{}_all_neg.bw'.format(TF_to_train)]
 '''
 for each strand a seperate file. 
 contains the start and its end of a peak with the respective read count.
@@ -47,9 +47,9 @@ contains the start and its end of a peak with the respective read count.
 valid_chroms = ['chr5', 'chr8', 'chr21']
 
 train_chroms = ['chr1', 'chr3', 'chr4', 'chr6', 'chr7', 
-                   'chr9', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16',
-                   'chr18', 'chr19', 'chr20', 'chr22', 'chrX']
-                  
+                'chr9', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16',
+                'chr18', 'chr19', 'chr20', 'chr22', 'chrX']
+
 test_chroms = ['chr2', 'chr10', 'chr17']
 
 
@@ -111,7 +111,7 @@ Default:
 	num_workers=0, batch_size=32, verbose=False
 
 train_data is a dataload object for faster loading of the data. 
-composed of one-hot-encoded sequence and signals for each training chromosome
+comprised of one-hot-encoded sequences and signals for each training chromosome
 '''
 
 # chromosomes the model validates on while training. not a control sequence nor the experimental bias #

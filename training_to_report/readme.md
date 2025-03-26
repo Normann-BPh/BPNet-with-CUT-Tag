@@ -1,8 +1,9 @@
-# Using a scheduler
-If you would like to use a scheduler to update the learning rate of you chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
+# Using a scheduler.
+If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
 - add 'scheduler' as a variable after 'optimizer' in line 314
 - add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
-# final params
+
+# The parameters used for training the BPNet model.
 ```
 # parameters; seperated into groups regarding their function #
     ## general ## generalized to keep them consistent throughout the process
@@ -59,4 +60,13 @@ additional_nonlinear_ops = None
 print_convergence_deltas = False
 raw_outputs = False
 random_state = None
+```
+# Command Line Tools
+If you wish to use the command-line tool to fit and analyse the model use the following commands:
+```
+bpnet fit -p training.json
+bpnet predict -p predict.json
+bpnet attribute  -p attribute.json
+modisco motifs -s <path to ohe from attribute> -a <path to attributes for attribute> -n 2000 -o motifs.h5
+modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
