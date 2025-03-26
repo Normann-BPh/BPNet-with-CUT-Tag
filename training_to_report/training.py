@@ -20,12 +20,28 @@ print('Using: ', TF_to_train)
 
 # paths to peak file (loci), genome (sequences), count/profile (signals) #
 loci = 'BPNet_files/peaks/{}_gc_matched_sliding_windows.bed'.format(TF_to_train)
+'''
+Peak file for HES1 (unsorted):
+chr1	939150	940020
+chr1	940020	940890
+chr1	940890	941760
+...     ...	    ...
+chr13	37744316	37745096
+chr8	27505053	27505584
+chr8	27505584	27506115
+'''
 
 sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa'
+'''
+a human genome, consistent of A, C, G and T. 
+'''
 
-signals = ['BPNet_files/BigWig_files/{}_all_pos.bw'.format(TF_to_train),
-            'BPNet_files/BigWig_files/{}_all_neg.bw'.format(TF_to_train)]
-
+signals = ['BPNet_files/BigWig_files/no_nans_{}_all_pos.bw'.format(TF_to_train),
+            'BPNet_files/BigWig_files/no_nans_{}_all_neg.bw'.format(TF_to_train)]
+'''
+for each strand a seperate file. 
+contains the start and its end of a peak with the respective read count.
+'''
 
 # define chromosomes used for validation (valid_chroms), for training (training_chroms) and for testing (test_chroms) #
 valid_chroms = ['chr5', 'chr8', 'chr21']
@@ -66,8 +82,8 @@ n_layers = 10 # number of dilated residual layers; defines receptive field
 n_outputs = 2 # output is profile and count
 n_control_tracks = 0 # no controls are used
 alpha = 0.1 # close to no importance of the count-loss
-profile_output_bias = True
-count_output_bias = True
+profile_output_bias = False # to stabilize attribution; didn't work
+count_output_bias = False # to stabilize attribution; didn't work
 name = '{}_Model'.format(TF_to_train)
 trimming = (in_window - out_window) // 2
 
@@ -93,8 +109,10 @@ Default:
 	in_window=2114, out_window=1000, max_jitter=128, reverse_complement=True, 
 	min_counts=None, max_counts=None, random_state=None, pin_memory=True, 
 	num_workers=0, batch_size=32, verbose=False
+
+train_data is a dataload object for faster loading of the data. 
+composed of one-hot-encoded sequence and signals for each training chromosome
 '''
-## train_data is a dataload object for faster loading of the data. composed of one-hot-encoded sequence and signals for each training chromosome
 
 # chromosomes the model validates on while training. not a control sequence nor the experimental bias #
 X_valid, y_valid = extract_loci(loci=loci, sequences=sequences, signals=signals, chroms=valid_chroms,
@@ -107,9 +125,11 @@ Default:
 	in_window=2114, out_window=1000, max_jitter=0, min_counts=None,
 	max_counts=None, target_idx=0, n_loci=None, alphabet=['A', 'C', 'G', 'T'], 
 	ignore=['N'], verbose=False
+
+X_valid is a tensor of one-hot-encoded sequences
+y_valid their respective signals (negative and positive strand)
 '''
-## X_valid is a tensor of one-hot-encoded sequences
-## y_valid their respective signals (negative and positive strand)
+
 
 
 # initiate the BPNet model with the specified architecture #
@@ -140,9 +160,14 @@ predictions_probability = model.fit(training_data=train_data, optimizer=optimize
 Default fit:
     training_data, optimizer, X_valid=None, X_ctl_valid=None, 
     y_valid=None, max_epochs=100, batch_size=64, validation_iter=100, 
-    early_stopping=None, verbose=True    
+    early_stopping=None, verbose=True
+
+the argument 'scheduler' is added by us. 
+the bpnet.py file of the bpnetlite package has to be edited to use this feature.
+    add 'scheduler' as a variable after 'optimizer' in line 314
+    add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
 '''
 
 # save the entire model and the state dictionary (for safety) #
-torch.save(model, '{}.troch'.format(TF_to_train,name)) 
-torch.save(model.state_dict(), '{}_report/{}_state_dict.pt'.format(TF_to_train,name))
+torch.save(model, '{}_report_n/{}.troch'.format(TF_to_train,name)) 
+torch.save(model.state_dict(), '{}_report_n/{}_state_dict.pt'.format(TF_to_train,name))
