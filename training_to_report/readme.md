@@ -4,7 +4,7 @@ If you would like to use a scheduler to update the learning rate of you chosen o
 - add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
 # final params
 ```
-# parameters; seperated into group regarding their function #
+# parameters; seperated into groups regarding their function #
     ## general ## generalized to keep them consistent throughout the process
 in_window = 1002 # in_window = out_window does not work for BPNet, hence the small difference
 out_window = 1000
