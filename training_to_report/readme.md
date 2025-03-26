@@ -1,13 +1,7 @@
-# not necessary. we have scripts now. error below still relevant
-
-## the commands for finding the motifs and then the subsequent report
-
-modisco motifs -s <path_one_hot>.npz -a <path_attr>.npz -n 20000 -o <path_saving_motif> -v
-
-modisco report -i <path_saving_motif> -o <path_report> -s <path_report>
-
-the report command could be extenden by '-m <path_meme>' but this results in error_5
-
+# Using a scheduler
+If you would like to use a scheduler to update the learning rate of you chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
+- add 'scheduler' as a variable after 'optimizer' in line 314
+- add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
 # final params
 ```
 # parameters; seperated into group regarding their function #
