@@ -1,3 +1,69 @@
+# Training and Analysis of the BPNet model(s)
+The scripts in this folder are our adaptation of the command-line functions used in bpnetlite.
+To use the command-line tools directly use the json files, for the commands see the last entry of this file. 
+---
+
+## Overview
+
+### 1. `training.py`
+**Purpose**: Define the training and validation data; define the model-architecture; fit the model
+
+**Usage**:
+```bash
+python training.py
+```
+- **Inputs**: peak file, genome and signals
+- **Outputs**: trained BPNet model, state-dictionary after training
+
+### 2. `predict.py`
+**Purpose**: Predict the profile and read count of the provided peak regions.
+
+**Usage**:
+```bash
+python predict.py
+```
+- **Inputs**: trained BPNet model; peak file and genome
+- **Outputs**: predicted profile and counts of test chromosomes
+---
+
+### 3. `attribute.py`
+**Purpose**: Extract the CWM of a trained model.
+
+**Usage**:
+```bash
+python attribute.py
+```
+- **Inputs**: trained BPNet model; peak file and genome
+- **Outputs**: attributes and the related one-hot-encoded sequences
+
+---
+
+---
+
+### 4. `motifs.py`
+**Purpose**: Find TFBS-motifs based on a trained BPNet-model.
+
+**Usage**:
+```bash
+python motifs.py
+```
+- **Inputs**: one-hot-encoded sequence and the related attributes
+- **Outputs**: patterns found by TFMoDISco
+---
+
+### 5. `report.py`
+**Purpose**: Compiling a report of all found motifs.
+
+**Usage**:
+```bash
+python report.py
+```
+- **Inputs**: motifs file
+- **Outputs**: a folder containing the images of found motifs
+---
+
+---
+
 # Using a scheduler.
 If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
 - add 'scheduler' as a variable after 'optimizer' in line 314
