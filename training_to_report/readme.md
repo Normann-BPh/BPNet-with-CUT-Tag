@@ -70,3 +70,4 @@ bpnet attribute  -p attribute.json
 modisco motifs -s <path to ohe from attribute> -a <path to attributes for attribute> -n 2000 -o motifs.h5
 modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
+Note that here the scheduler is not implemented. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of you environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
