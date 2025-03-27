@@ -19,7 +19,7 @@ if TF_to_train == '':
 print('Using: ', TF_to_train)
 
 # paths to peak file (loci), genome (sequences), count/profile (signals) #
-loci = 'BPNet_files/peaks/{}_gc_matched_sliding_windows.bed'.format(TF_to_train)
+loci = 'BPNet_files/peaks/gc_matched_controls_{}_sliding_windows_peaks.bed'.format(TF_to_train)
 '''
 Peak file for HES1 (unsorted):
 chr1	939150	940020
@@ -36,8 +36,8 @@ sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.prima
 a human genome, consistent of A, C, G and T. 
 '''
 
-signals = ['BPNet_files/BigWig_files/{}_all_pos.bw'.format(TF_to_train),
-            'BPNet_files/BigWig_files/{}_all_neg.bw'.format(TF_to_train)]
+signals = ['BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_pos.bw'.format(TF_to_train),
+            'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_neg.bw'.format(TF_to_train)]
 '''
 for each strand a seperate file. 
 contains the start and its end of a peak with the respective read count.
@@ -46,11 +46,11 @@ contains the start and its end of a peak with the respective read count.
 # define chromosomes used for validation (valid_chroms), for training (training_chroms) and for testing (test_chroms) #
 valid_chroms = ['chr5', 'chr8', 'chr21']
 
-train_chroms = ['chr1', 'chr3', 'chr4', 'chr6', 'chr7', 
+train_chroms = ['chr1', 'chr2', 'chr3', 'chr6', 'chr7', 
                 'chr9', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16',
                 'chr18', 'chr19', 'chr20', 'chr22', 'chrX']
 
-test_chroms = ['chr2', 'chr10', 'chr17']
+test_chroms = ['chr4', 'chr10', 'chr17']
 
 
 # parameters; seperated into group regarding their function #
@@ -78,17 +78,22 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 
     ## BPNet ##
 n_filters = 64
-n_layers = 10 # number of dilated residual layers; defines receptive field
+n_layers = 9 # number of dilated residual layers; defines receptive field; 2^(n_layers+1)
 n_outputs = 2 # output is profile and count
 n_control_tracks = 0 # no controls are used
 alpha = 0.1 # close to no importance of the count-loss
-profile_output_bias = False # to stabilize attribution; didn't work
-count_output_bias = False # to stabilize attribution; didn't work
+profile_output_bias = False # to stabilize attribution
+count_output_bias = False # to stabilize attribution
 name = '{}_Model'.format(TF_to_train)
 trimming = (in_window - out_window) // 2
 
     ## optimizer ##
-lr = 0.0009
+lr = 0.004
+
+    ## scheduler ##
+mode = 'min'
+factor = 0.5
+patience = 3
 
     ## fit ##
 max_epochs = 100
@@ -150,12 +155,13 @@ model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # define scheduler to update learning rate #
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=mode, factor=factor, patience=patience)
 
 # initiate fitting of the model using the specified training and validation sequences #
 predictions_probability = model.fit(training_data=train_data, optimizer=optimizer, X_valid=X_valid, X_ctl_valid=None, 
-                                    y_valid=y_valid, max_epochs=max_epochs, batch_size=batch_size_f, validation_iter=validation_iter,
-                                    early_stopping=early_stopping, verbose=verbose, scheduler=scheduler)
+                                    y_valid=y_valid, 
+                                    max_epochs=max_epochs, batch_size=batch_size_f, validation_iter=validation_iter,
+                                    early_stopping=early_stopping, verbose=True, scheduler=scheduler)
 '''
 Default fit:
     training_data, optimizer, X_valid=None, X_ctl_valid=None, 
@@ -168,6 +174,8 @@ the bpnet.py file of the bpnetlite package has to be edited to use this feature.
     add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
 '''
 
-# save the entire model and the state dictionary (for safety) #
-torch.save(model, '{}_report_n/{}.troch'.format(TF_to_train,name)) 
-torch.save(model.state_dict(), '{}_report_n/{}_state_dict.pt'.format(TF_to_train,name))
+# print last learning rate #
+print(optimizer.param_groups[0]['lr'])
+
+# save the state dictionary (for safety) # 
+torch.save(model.state_dict(), '{}_report_r/{}_state_dict.pt'.format(TF_to_train,name))
