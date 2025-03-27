@@ -21,12 +21,12 @@ if TF_to_predict == '':
 print('Using: ', TF_to_predict)
 
 # paths to peak file (loci), genome (sequences), count/profile (signals) #
-loci = 'BPNet_files/peaks/{}_gc_matched_sliding_windows.bed'.format(TF_to_predict)
+loci = 'BPNet_files/peaks/{}_sliding_windows_peaks.bed'.format(TF_to_predict)
 
 sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa'
 
 # define chromosomes used for testing (test_chroms) #
-test_chroms = ['chr2', 'chr10', 'chr17']
+test_chroms = ['chr4', 'chr10', 'chr17']
 
 
 # parameters; seperated into group regarding their function #
@@ -61,7 +61,7 @@ random_state = None
 name = '{}_Model'.format(TF_to_predict)
 
 
-model = torch.load('{}_report_n/{}.troch'.format(TF_to_predict,name), weights_only=False)
+model = torch.load('{}_report_r/{}.troch'.format(TF_to_predict,name), weights_only=False)
 
 examples = extract_loci(loci=loci, sequences=sequences, chroms=test_chroms,
                         in_window=in_window, out_window=out_window, max_jitter=max_jitter, min_counts=min_counts,
@@ -94,5 +94,5 @@ Default:
 	random_state=None, verbose=False
 '''
 
-np.savez_compressed('{}_report_n/{}_ohe.npz'.format(TF_to_predict,TF_to_predict), examples.cpu())
-np.savez_compressed('{}_report_n/{}_attr.npz'.format(TF_to_predict,TF_to_predict), attribitutions.cpu())
+np.savez_compressed('{}_report_r/{}_ohe.npz'.format(TF_to_predict,TF_to_predict), examples.cpu())
+np.savez_compressed('{}_report_r/{}_attr.npz'.format(TF_to_predict,TF_to_predict), attribitutions.cpu())
