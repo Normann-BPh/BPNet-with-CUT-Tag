@@ -232,22 +232,25 @@ def generate_sliding_windows(
 
 
 # ----- files and arguments needed -----
-use_single_peak_file = False  # Set this to True if you want to use a single peak file
+use_single_peak_file = True  # Set this to True if you want to use a single peak file
 gc_matched = True # set this False if you want to have no gc matching
+
+TF = 'HES1'
+TF2 = 'HEYL' 
 
 output_prefix = 'gc_matched_controls'
 
-#peak_file_s = 'BPNet_files/peaks/HES1_peaks.bed'
-peak_file_s = ['BPNet_files/peaks/HES1_peaks.bed', 'BPNet_files/peaks/HEYL_peaks.bed']
+peak_file_s = f'BPNet_files/peaks/{TF}_peaks.bed'
+#peak_file_s = ['BPNet_files/peaks/{TF}_peaks.bed', 'BPNet_files/peaks/HEYL_peaks.bed']
 
 
 # BigWig and FASTA files
-bigwig_file = 'BPNet_files/BigWig_files/HES1_all_neg.bw'  # For chrom lengths
+bigwig_file = f'BPNet_files/BigWig_files/{TF}_all_neg.bw'  # For chrom lengths
 signals = [
-    'BPNet_files/BigWig_files/HES1_all_neg.bw',
-    'BPNet_files/BigWig_files/HES1_all_pos.bw',
-    'BPNet_files/BigWig_files/HEYL_all_neg.bw',
-    'BPNet_files/BigWig_files/HEYL_all_pos.bw'
+    f'BPNet_files/BigWig_files/{TF}_all_neg.bw',
+    f'BPNet_files/BigWig_files/{TF}_all_pos.bw',
+    f'BPNet_files/BigWig_files/{TF2}_all_neg.bw',
+    f'BPNet_files/BigWig_files/{TF2}_all_pos.bw'
 ]
 
 fasta_file = "BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
@@ -268,7 +271,7 @@ with pyBigWig.open(bigwig_file) as bw:
 
 
 #---- calling the function ---- #
-output_bed = naming_final_file(peak_file_s, output_prefix, use_single_peak_file=False, gc_matched=True)
+output_bed = naming_final_file(peak_file_s, output_prefix, use_single_peak_file=use_single_peak_file, gc_matched=gc_matched)
 generate_sliding_windows(peak_file_s, fasta_file, output_bed, chrom_sizes_dict, signals, stride=1000, use_single_peak_file = use_single_peak_file, gc_matched = gc_matched)
 
 
