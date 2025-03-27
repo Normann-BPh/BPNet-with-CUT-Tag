@@ -9,17 +9,22 @@ from Bio import SeqIO
 
 
 
-peak_file_list = ['BPNet_files/peaks/HES1_peaks.bed', 'BPNet_files/peaks/HEYL_peaks.bed']
-# peak_file = 'BPNet_files/peaks/HES1_peaks.bed' if you wanna create sliding windows just for one peak, use this otherwise use the newly created df
-# BUT YOU NEED TO ALSO PUT merge = False!!!
+def naming_final_file(peak_file, output_prefix, use_single_peak_file=False, gc_matched=True):
+    if gc_matched:
+        if use_single_peak_file:
+            output_bed = f"{output_prefix}_{peak_file.split('/')[-1].replace('_peaks.bed', '')}_sliding_windows_peaks.bed"
+        else:
+            # Here, peak_file is a list of peak files
+            merged_prefix = '_'.join([pf.split('/')[-1].replace('_peaks.bed','') for pf in peak_file])
+            output_bed = f"{output_prefix}_{merged_prefix}_sliding_windows_peaks.bed"
+    else:
+        if use_single_peak_file:
+            output_bed = f"{peak_file.split('/')[-1].replace('_peaks.bed', '')}_sliding_windows_peaks.bed"
+        else:
+            output_bed = f"{'_'.join([pf.split('/')[-1].replace('_peaks.bed', '') for pf in peak_file])}_sliding_windows_peaks.bed"
+    
+    return output_bed
 
-bigwig_file = 'BPNet_files/BigWig_files/HES1_all_neg.bw' # This is just for getting the chrom lengths (all bw files have the same chrom length)
-signals = ['BPNet_files/BigWig_files/HES1_all_neg.bw', 'BPNet_files/BigWig_files/HES1_all_pos.bw', 'BPNet_files/BigWig_files/HEYL_all_neg.bw', 'BPNet_files/BigWig_files/HEYL_all_pos.bw']
-
-fasta_file = "BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
-
-output_prefix = "gc_matched_controls_final"
-output_bed = f"{output_prefix}_{'_'.join([pf.split('/')[-1].replace('_peaks.bed', '') for pf in peak_file_list])}_peaks_sliding_windows.bed"
 
 
 
@@ -81,18 +86,19 @@ def counts_per_peak(signals, chrom, start, end):
     return sum_sum
 
 
-def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dict, ratio_gc_matched_controls = 1/3, merge = False):
+def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dict, ratio_gc_matched_controls = 1/3, use_single_peak_file = False):
     # This function will check the gc content for a given peak file and find new regions outside of peaks 
     # The new regions will be added to a new bed file containing both the original peaks and the added peaks
     # It outputs a new datafame containing the gc matched controls with the original peaks combined
 
-    if merge == True:
+    if use_single_peak_file == False:
         peak_merge_prefix = 'merged_tfs'
         merged_bed = f"{peak_merge_prefix}_{''.join([peak_file.split('/')[-1].replace('peaks.bed', '') for peak_file in peak_file_])}peaks.bed"
-        df_peaks = merge_peak_files(peak_file_list, merged_bed)
+        df_peaks = merge_peak_files(peak_file_, merged_bed)
     
     else:
         df_peaks = pd.read_csv(peak_file_, sep="\t", header=None, names=["chr", "start", "end"])
+    
     #---- read the fasta file-----
     genome_dict = {}
     for record in SeqIO.parse(fasta_file, "fasta"):
@@ -179,11 +185,24 @@ def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dic
     return df_combined
 
 
-def generate_sliding_windows(peak_file_, fasta_file, output_bed, chrom_sizes_dict, stride=1000, merge = False):
-    # This function will now use the output from generate_gc_matched_regions and now create sliding windows by splitting apart peaks
-    # The output will be a new final BED file containing both peaks and controls with split apart peaks
-     
-    df = generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dict, ratio_gc_matched_controls = 1/3, merge=merge)
+def generate_sliding_windows(
+    peak_file_, fasta_file, output_bed, chrom_sizes_dict, signals,
+    stride=1000, use_single_peak_file=False, gc_matched=True):
+    
+    if gc_matched:
+        df = generate_gc_matched_regions(
+            fasta_file, peak_file_, signals, chrom_sizes_dict,
+            ratio_gc_matched_controls=1/3,
+            use_single_peak_file=use_single_peak_file
+        )
+    else:
+        if use_single_peak_file:
+            df = pd.read_csv(peak_file_, sep="\t", header=None, names=["chr", "start", "end"])
+        else:
+            merged_bed = "merged_no_gc_matching.bed"
+            df = merge_peak_files(peak_file_, merged_bed)
+
+    
     new_entries = []
 
     for chrom, peak_start, peak_end in df.values:
@@ -212,6 +231,28 @@ def generate_sliding_windows(peak_file_, fasta_file, output_bed, chrom_sizes_dic
     return output_bed
 
 
+# ----- files and arguments needed -----
+use_single_peak_file = False  # Set this to True if you want to use a single peak file
+gc_matched = True # set this False if you want to have no gc matching
+
+output_prefix = 'gc_matched_controls'
+
+#peak_file_s = 'BPNet_files/peaks/HES1_peaks.bed'
+peak_file_s = ['BPNet_files/peaks/HES1_peaks.bed', 'BPNet_files/peaks/HEYL_peaks.bed']
+
+
+# BigWig and FASTA files
+bigwig_file = 'BPNet_files/BigWig_files/HES1_all_neg.bw'  # For chrom lengths
+signals = [
+    'BPNet_files/BigWig_files/HES1_all_neg.bw',
+    'BPNet_files/BigWig_files/HES1_all_pos.bw',
+    'BPNet_files/BigWig_files/HEYL_all_neg.bw',
+    'BPNet_files/BigWig_files/HEYL_all_pos.bw'
+]
+
+fasta_file = "BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+
+
 #since all bigwig files have the same chromosome length, we can simply choose 1 to get the length of the chromosomes
 chrom_sizes_dict = {}
 with pyBigWig.open(bigwig_file) as bw:
@@ -220,8 +261,16 @@ with pyBigWig.open(bigwig_file) as bw:
         chrom_sizes_dict[chrom] = chroms[chrom]  # Store chromosome sizes
 
 
+
+
+
+
+
+
 #---- calling the function ---- #
-generate_sliding_windows(peak_file_list, fasta_file, output_bed, chrom_sizes_dict, stride=1000, merge=True)
+output_bed = naming_final_file(peak_file_s, output_prefix, use_single_peak_file=False, gc_matched=True)
+generate_sliding_windows(peak_file_s, fasta_file, output_bed, chrom_sizes_dict, signals, stride=1000, use_single_peak_file = use_single_peak_file, gc_matched = gc_matched)
+
 
 
 
