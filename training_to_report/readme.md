@@ -89,21 +89,26 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 
     ## BPNet ##
 n_filters = 64
-n_layers = 10
+n_layers = 9
 n_outputs = 2
 n_control_tracks = 0 # no controls are used
 alpha = 0.1 # no importance of the count-loss, aim is motif
-profile_output_bias = True
-count_output_bias = True
+profile_output_bias = False # to stabilize attribution
+count_output_bias = False # to stabilize attribution
 name = '{}_Model'.format(TF_to_train)
 trimming = (in_window - out_window) // 2
 
     ## optimizer ##
-lr = 0.0009
+lr = 0.004
+
+    ## scheduler ##
+mode = 'min'
+factor = 0.5
+patience = 3
 
     ## fit ##
 max_epochs = 100
-batch_size_f = 64
+batch_size_f = 128
 validation_iter = 200
 early_stopping = 10
 
