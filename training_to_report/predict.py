@@ -1,3 +1,10 @@
+'''
+This is a general form a the script use to predict profile and counts.
+To predict for a specific region, change the path to a bed file 
+containing the location and set "test_chroms" to include the necessary chromosome(s).
+Every thing else is handled by the script.
+'''
+
 import os
 print(os.getcwd())
 
@@ -76,7 +83,7 @@ X_valid is a tensor of one-hot-encoded sequences
 y_valid their respective signals (negative and positive strand)
 '''
 
-y_profile, y_counts = predict(model=model, X=examples, batch_size=64, device='cuda', verbose=verbose)
+y_profile, y_counts = predict(model=model, X=examples, batch_size=64, device=device, verbose=verbose)
 '''
 Default: 
     model, X, args=None, batch_size=32, device='cuda', verbose=False

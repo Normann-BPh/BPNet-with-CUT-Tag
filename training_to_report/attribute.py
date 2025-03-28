@@ -16,7 +16,7 @@ device = torch.device('cuda')
 print('Using device:', torch.cuda.get_device_name())
 
 # user input defines the TF the model is trained for # 
-TF_to_predict = input(' TF to test on. "HES1", "HEYL", "MYOD1" or "MYOG".\n Multi not supported.\n Press "enter" to choose "HES1": ')
+TF_to_predict = input(' TF to find CWMs. "HES1", "HEYL", "MYOD1" or "MYOG".\n Multi not supported.\n Press "enter" to choose "HES1": ')
 if TF_to_predict == '':
     TF_to_predict = 'HES1'
 print('Using: ', TF_to_predict)
