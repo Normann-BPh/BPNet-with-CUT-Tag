@@ -1,5 +1,5 @@
 # Training and Analysis of the BPNet model(s)
-The scripts in this folder are our adaptation of the command-line functions used in bpnet-lite.
+The scripts in this folder are our adaptation of the command-line functions used in [bpnet-lite](https://github.com/jmschrei/bpnet-lite).
 To use the command-line tools directly use the json files; for the commands see the last section of this file.
 ---
 
@@ -23,7 +23,7 @@ python training.py
 python predict.py
 ```
 - **Inputs**: trained BPNet model; peak file and genome
-- **Outputs**: predicted profile and counts of test chromosomes
+- **Outputs**: predicted profile and counts
 ---
 
 ### 3. `attribute.py`
@@ -35,7 +35,6 @@ python attribute.py
 ```
 - **Inputs**: trained BPNet model; peak file and genome
 - **Outputs**: attributes and the related one-hot-encoded sequences
-
 ---
 
 ### 4. `motifs.py`
@@ -56,8 +55,8 @@ python motifs.py
 ```bash
 python report.py
 ```
-- **Inputs**: motifs file
-- **Outputs**: a folder containing the images of found motifs
+- **Inputs**: motif file
+- **Outputs**: a folder containing the images of found motifs and a html tabularizing them.
 ---
 
 ---
@@ -144,3 +143,6 @@ modisco motifs -s <path to ohe from attribute> -a <path to attributes from attri
 modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
 Note that here the scheduler is not implemented, nor is it possible to define the references as a tensor of zeros. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of your environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
+
+# Handler
+This directory was primarily written and editted by J. Normann.
