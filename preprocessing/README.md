@@ -69,3 +69,4 @@ python sliding_windows_final.py
 - Final BED file with all regions split into uniform sliding windows
 
 ---
+All preprocessing was done by Miguel Rius-Lutz
