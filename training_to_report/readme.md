@@ -1,6 +1,6 @@
 # Training and Analysis of the BPNet model(s)
-The scripts in this folder are our adaptation of the command-line functions used in bpnetlite.
-To use the command-line tools directly use the json files; for the commands see the last section of this file. 
+The scripts in this folder are our adaptation of the command-line functions used in bpnet-lite.
+To use the command-line tools directly use the json files; for the commands see the last section of this file.
 ---
 
 ## Overview
