@@ -13,9 +13,9 @@ if TF_to_predict == '':
 print('Using: ', TF_to_predict)
 
 # load by 'motifs.py' generated motifs #
-motifs = '{}_report_r/{}_motifs.hdf5'.format(TF_to_predict,TF_to_predict)
+motifs = '{}_report/{}_motifs.hdf5'.format(TF_to_predict,TF_to_predict)
 
-out = '{}_report_r'.format(TF_to_predict)
+out = '{}_report'.format(TF_to_predict)
 
 report_motifs(modisco_h5py=motifs, output_dir=out, img_path_suffix=out,
               meme_motif_db=None, is_writing_tomtom_matrix=False, top_n_matches=3,

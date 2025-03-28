@@ -9,6 +9,7 @@ from bpnetlite.io import PeakGenerator
 
 from tangermeme.io import extract_loci
 
+# define the device to use, i.e. cuda/GPU #
 device = torch.device('cuda')
 print('Using device:', torch.cuda.get_device_name())
 
@@ -79,7 +80,7 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
     ## BPNet ##
 n_filters = 64
 n_layers = 9 # number of dilated residual layers; defines receptive field; 2^(n_layers+1)
-n_outputs = 2 # output is profile and count
+n_outputs = 2 # output is positive and negative strand
 n_control_tracks = 0 # no controls are used
 alpha = 0.1 # close to no importance of the count-loss
 profile_output_bias = False # to stabilize attribution
@@ -148,7 +149,7 @@ Default BPNet:
     count_output_bias=True, name=None, trimming=None, verbose=True
 '''
 
-# move the model to CUDA, i.e. the GPU #
+# move the model to CUDA, i.e. the GPU, or  #
 model.to(device)
 
 # define optimizer for fitting #
@@ -178,4 +179,4 @@ the bpnet.py file of the bpnetlite package has to be edited to use this feature.
 print(optimizer.param_groups[0]['lr'])
 
 # save the state dictionary (for safety) # 
-torch.save(model.state_dict(), '{}_report_r/{}_state_dict.pt'.format(TF_to_train,name))
+torch.save(model.state_dict(), '{}_report/{}_state_dict.pt'.format(TF_to_train, name))

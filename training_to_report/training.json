@@ -11,13 +11,13 @@
     "reverse_complement": true,
 
     "n_filters": 64,
-    "n_layers": 10,
+    "n_layers": 9,
     "n_outputs": 2,
     "n_control_tracks": 0,
     "alpha": 0.1,
-    "profile_output_bias": true,
-    "count_output_bias": true,
-    "name": "test_model",
+    "profile_output_bias": false,
+    "count_output_bias": false,
+    "name": <model name>,
 
     "lr": 0.0009,
 

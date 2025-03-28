@@ -3,14 +3,14 @@
 	"in_window":1002,
 	"out_window":1000,
 	"verbose":true,
-	"chroms": ["chr2", "chr10", "chr17"],  
-	"model":"test_model.torch",  
+	"chroms": ["chr4", "chr10", "chr17"],  
+	"model":<path to model torch file>,  
     
-    "sequences": <path to genome fasta-file>,
+    "sequences": <path to genome fasta file>,
     
-    "loci": <path to peak.bed file>,
+    "loci": <path to peak file>,
 	
 	
-	"profile_filename": "y_profile.npz",
-	"counts_filename": "y_counts.npz" 
+	"profile_filename": <path to save profile.npz file>,
+	"counts_filename": <path to save counts.npz file> 
 }

@@ -37,7 +37,7 @@ a human genome, consistent of A, C, G and T.
 '''
 
 # define chromosomes used for testing (test_chroms) #
-test_chroms = ['chr2', 'chr10', 'chr17']
+test_chroms = ['chr4', 'chr10', 'chr17']
 
 
 # parameters; seperated into group regarding their function #
@@ -58,7 +58,8 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 name = '{}_Model'.format(TF_to_predict)
 
 
-model = torch.load('{}_report_n/{}.troch'.format(TF_to_predict,name), weights_only=False)
+model = torch.load('{}_report/{}.final.troch'.format(TF_to_predict,name), weights_only=False)
+model.eval()
 
 examples = extract_loci(loci=loci, sequences=sequences, chroms=test_chroms,
                         in_window=in_window, out_window=out_window, max_jitter=max_jitter, min_counts=min_counts,
@@ -85,5 +86,5 @@ y_counts is a tensor with the predicted count of each loci
 '''
 
 # save the predicted profile and counts of TF_to_predict #
-np.savez_compressed('{}_report_n/{}_y_profile.npz'.format(TF_to_predict,TF_to_predict), y_profile)
-np.savez_compressed('{}_report_n/{}_y_counts.npz'.format(TF_to_predict,TF_to_predict), y_counts)
+np.savez_compressed('{}_report/{}_y_profile.npz'.format(TF_to_predict,TF_to_predict), y_profile)
+np.savez_compressed('{}_report/{}_y_counts.npz'.format(TF_to_predict,TF_to_predict), y_counts)

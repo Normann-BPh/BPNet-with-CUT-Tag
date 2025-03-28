@@ -1,6 +1,6 @@
 # Training and Analysis of the BPNet model(s)
 The scripts in this folder are our adaptation of the command-line functions used in bpnetlite.
-To use the command-line tools directly use the json files, for the commands see the last entry of this file. 
+To use the command-line tools directly use the json files; for the commands see the last section of this file. 
 ---
 
 ## Overview
@@ -61,7 +61,6 @@ python report.py
 ---
 
 ---
-
 # The parameters used for training the BPNet model.
 ```
 # parameters; seperated into groups regarding their function #
@@ -89,10 +88,10 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 
     ## BPNet ##
 n_filters = 64
-n_layers = 9
-n_outputs = 2
+n_layers = 9 # number of dilated residual layers; defines receptive field; 2^(n_layers+1)
+n_outputs = 2 # output is positive and negative strand
 n_control_tracks = 0 # no controls are used
-alpha = 0.1 # no importance of the count-loss, aim is motif
+alpha = 0.1 # no importance of the count-loss
 profile_output_bias = False # to stabilize attribution
 count_output_bias = False # to stabilize attribution
 name = '{}_Model'.format(TF_to_train)
@@ -116,6 +115,10 @@ early_stopping = 10
 target = 0
 batch_size = 128
 references = dinucleotide_shuffle
+'''
+If you wish to use a reference of zeros for the attribution method, uncomment the line below and set "n_shuffles = 1".
+'''
+# references = torch.zeros(len(examples), n_shuffles, *examples.shape[1:]).type(torch.cuda.DoubleTensor).requires_grad_()
 n_shuffles = 10
 return_references = True
 hypothetical = None
@@ -139,4 +142,4 @@ bpnet attribute  -p attribute.json
 modisco motifs -s <path to ohe from attribute> -a <path to attributes from attribute> -n 20000 -o motifs.h5
 modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder>
 ```
-Note that here the scheduler is not implemented. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of your environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
+Note that here the scheduler is not implemented, nor is it possible to define the references as a tensor of zeros. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of your environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.

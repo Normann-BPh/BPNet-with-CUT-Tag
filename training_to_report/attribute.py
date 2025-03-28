@@ -6,11 +6,12 @@ import numpy as np
 
 from bpnetlite import BPNet
 from bpnetlite.bpnet import ProfileWrapper
+from bpnetlite.attribute import deep_lift_shap
 
 from tangermeme.io import extract_loci
 from tangermeme.ersatz import dinucleotide_shuffle
-from tangermeme.deep_lift_shap import deep_lift_shap
 
+# define the device to use, i.e. cuda/GPU #
 device = torch.device('cuda')
 print('Using device:', torch.cuda.get_device_name())
 
@@ -48,6 +49,10 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 target = 0
 batch_size = 128
 references = dinucleotide_shuffle
+'''
+If you wish to use a reference of zeros for the attribution method, uncomment the line below and set "n_shuffles = 1".
+'''
+# references = torch.zeros(len(examples), n_shuffles, *examples.shape[1:]).type(torch.cuda.DoubleTensor).requires_grad_()
 n_shuffles = 10
 return_references = True
 hypothetical = None
@@ -61,7 +66,8 @@ random_state = None
 name = '{}_Model'.format(TF_to_predict)
 
 
-model = torch.load('{}_report_r/{}.troch'.format(TF_to_predict,name), weights_only=False)
+model = torch.load('{}_report/{}.final.troch'.format(TF_to_predict, name), weights_only=False)
+model.eval()
 
 examples = extract_loci(loci=loci, sequences=sequences, chroms=test_chroms,
                         in_window=in_window, out_window=out_window, max_jitter=max_jitter, min_counts=min_counts,
@@ -94,5 +100,5 @@ Default:
 	random_state=None, verbose=False
 '''
 
-np.savez_compressed('{}_report_r/{}_ohe.npz'.format(TF_to_predict,TF_to_predict), examples.cpu())
-np.savez_compressed('{}_report_r/{}_attr.npz'.format(TF_to_predict,TF_to_predict), attribitutions.cpu())
+np.savez_compressed('{}_report/{}_ohe.npz'.format(TF_to_predict, TF_to_predict), examples.cpu())
+np.savez_compressed('{}_report/{}_attr.npz'.format(TF_to_predict, TF_to_predict), attribitutions.cpu())
