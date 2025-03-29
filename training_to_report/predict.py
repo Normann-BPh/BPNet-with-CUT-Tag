@@ -65,7 +65,7 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
 name = '{}_Model'.format(TF_to_predict)
 
 
-model = torch.load('{}_report/{}.final.troch'.format(TF_to_predict,name), weights_only=False)
+model = torch.load('{}_report/{}.final.torch'.format(TF_to_predict,name), weights_only=False)
 model.eval()
 
 examples = extract_loci(loci=loci, sequences=sequences, chroms=test_chroms,
