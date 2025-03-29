@@ -3,12 +3,22 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 
+import matplotlib.patches as patches
+
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["DejaVu Serif"],
+    "axes.labelsize": 18,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14
+})
+
 TF_to_plot = input(' TF to train on. "HES1", "HEYL", "MYOD1" or "MYOG".\n Multi not supported.\n Press "enter" to choose "HES1": ')
 if TF_to_plot == '':
     TF_to_plot = 'HES1'
 print('Using: ', TF_to_plot)
 
-colours = ["#79008a","#5bab07"]
+colours = {"HES1": ["#9F1D20", "#DA9A9C"], "HEYL": ["#3B3E91", "#9D9EC8"], "MYOD1": ["#9E8930", "#CEC497"], "MYOG": ["#347C43","#99BDA1"]}
 
 Validation_Loss = np.load(f'{TF_to_plot}_report_r/mnll_loss.npy', allow_pickle=True)
 
@@ -26,7 +36,7 @@ if TF_to_plot in ['HES1','HEYL']:
     fig, (ax1, ax2) = plt.subplots(2,1, sharex=True)
     fig.subplots_adjust(hspace=0.05)
 
-    ax2.plot(t,Profile_Loss, color=colours[1])
+    ax2.plot(t,Profile_Loss, color=colours[TF_to_plot][1])
     
     ax1.set_ylim(ylim1_min,ylim1_max)
     ax1.get_yaxis().set_ticklabels([])
@@ -38,12 +48,12 @@ if TF_to_plot in ['HES1','HEYL']:
     ax2.xaxis.tick_bottom()
     
     ax1.tick_params(labeltop=False, bottom=False)
-    ax2.tick_params(axis='y', labelcolor=colours[1])
+    ax2.tick_params(axis='y', labelcolor=colours[TF_to_plot][1])
     
-    ax2.set_ylabel('Training loss', color=colours[1], fontsize=18)
+    ax2.set_ylabel('Training loss', color=colours[TF_to_plot][1], fontsize=18)
     ax2.set_xlabel('Epoch', fontsize=18)
 
-    ax2.plot(t, Profile_Loss, color=colours[1])
+    ax2.plot(t, Profile_Loss, color=colours[TF_to_plot][1])
     
     d = 0.5
     kwargs = dict(marker=[(-1,-d),(1,d)],markersize=12,
@@ -57,16 +67,16 @@ if TF_to_plot in ['HES1','HEYL']:
     ax3.set_ylim(ylim1_min,ylim1_max)
     ax4.set_ylim(ylim2_min,ylim2_max)
     
-    ax4.set_ylabel('Validation loss', color=colours[0], fontsize=18)
+    ax4.set_ylabel('Validation loss', color=colours[TF_to_plot][0], fontsize=18)
     
-    ax3.tick_params(axis='y', labelcolor=colours[0])
-    ax4.tick_params(axis='y', labelcolor=colours[0])
+    ax3.tick_params(axis='y', labelcolor=colours[TF_to_plot][0])
+    ax4.tick_params(axis='y', labelcolor=colours[TF_to_plot][0])
     
     ax3.spines.bottom.set_visible(False)
     ax4.spines.top.set_visible(False)
 
-    ax3.plot(t,Validation_Loss, color=colours[0])
-    ax4.plot(t,Validation_Loss, color=colours[0])
+    ax3.plot(t,Validation_Loss, color=colours[TF_to_plot][0])
+    ax4.plot(t,Validation_Loss, color=colours[TF_to_plot][0])
     
     ax1.spines.left.set_linewidth(1.5)
     ax2.spines.left.set_linewidth(1.5)
@@ -79,23 +89,23 @@ if TF_to_plot in ['HES1','HEYL']:
     ax2.spines.bottom.set_linewidth(1.5)
     
     
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    fig.tight_layout()
     
 else:
     fig, ax1 = plt.subplots()
     
-    ax1.plot(t, Profile_Loss, color=colours[1])
-    ax1.tick_params(axis='y', labelcolor=colours[1])
+    ax1.plot(t, Profile_Loss, color=colours[TF_to_plot][1])
+    ax1.tick_params(axis='y', labelcolor=colours[TF_to_plot][1])
     
-    ax1.set_ylabel('Training loss', color=colours[1], fontsize=18)
+    ax1.set_ylabel('Training loss', color=colours[TF_to_plot][1], fontsize=18)
         
     ax2 = ax1.twinx()    
     ax2.set_ylim(ylim2_min,ylim1_max)
     ax2.xaxis.tick_bottom()   
-    ax2.tick_params(axis='y', labelcolor=colours[0])
-    ax2.set_ylabel('Validation loss', color=colours[0], fontsize=18)
+    ax2.tick_params(axis='y', labelcolor=colours[TF_to_plot][0])
+    ax2.set_ylabel('Validation loss', color=colours[TF_to_plot][0], fontsize=18)
     ax2.set_xlabel('Epoch', fontsize=18)
-    ax2.plot(t,Validation_Loss, color=colours[0])
+    ax2.plot(t,Validation_Loss, color=colours[TF_to_plot][0])
     
     ax1.spines.left.set_linewidth(1.5)
     ax2.spines.left.set_linewidth(1.5)
@@ -107,6 +117,6 @@ else:
     
     ax1.spines.bottom.set_linewidth(1.5)
     
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    fig.tight_layout()
     
 plt.savefig(f'results/plots/{TF_to_plot}_mnll_profile.png',dpi=400.0)
