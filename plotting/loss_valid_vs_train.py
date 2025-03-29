@@ -20,9 +20,9 @@ print('Using: ', TF_to_plot)
 
 colours = {"HES1": ["#9F1D20", "#DA9A9C"], "HEYL": ["#3B3E91", "#9D9EC8"], "MYOD1": ["#9E8930", "#CEC497"], "MYOG": ["#347C43","#99BDA1"]}
 
-Validation_Loss = np.load(f'{TF_to_plot}_report_r/mnll_loss.npy', allow_pickle=True)
+Validation_Loss = np.load(f'{TF_to_plot}_report/mnll_loss.npy', allow_pickle=True)
 
-Profile_Loss = np.load(f'{TF_to_plot}_report_r/profile_loss.npy', allow_pickle=True)
+Profile_Loss = np.load(f'{TF_to_plot}_report/profile_loss.npy', allow_pickle=True)
 
 ylim1_max = max(Validation_Loss)*(1.02)
 ylim1_min = np.round(max(Validation_Loss))*(0.98)
