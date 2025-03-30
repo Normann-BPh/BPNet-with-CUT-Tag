@@ -15,3 +15,8 @@ import torch
 model = torch.load(path_to_model, weights_only=False)
 model.eval()
 ```
+# Conda
+If you work with conda you can easily install our package with the yml file `bpnet_env.yml`. Note that a linux environment is strictly necessary; if you work with Windows, check out WSL for easy access.
+```bash
+conda env create -f bpnet_env.yml
+```
