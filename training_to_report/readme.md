@@ -57,7 +57,6 @@ python report.py
 ```
 - **Inputs**: motif file
 - **Outputs**: a folder containing the images of found motifs and a html tabularizing them.
----
 
 ---
 # The parameters used for training the BPNet model.
@@ -127,6 +126,7 @@ print_convergence_deltas = False
 raw_outputs = False
 random_state = None
 ```
+---
 # Using a scheduler.
 If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
 - add 'scheduler' as a variable after 'optimizer' in line 314
@@ -141,7 +141,7 @@ We also added an argument to easily define where the log and model are saved dur
 	- 491:    numpy.save('{}/mnll_loss.npy'.format(folder,self.name),valid_loss_all)
 	- 492:    numpy.save('{}/profile_loss.npy'.format(folder,self.name),profile_loss_all)
 Alternatively you can copy `bpnet.py` into the bpnetlite directory. 
-
+---
 # Command Line Tools
 If you wish to use the command-line tool to fit and analyse the model, use the following commands after providing the paths in all json files:
 ```
@@ -153,5 +153,6 @@ modisco report -i motifs.h5 -o <path to report folder> -s <path to report folder
 ```
 Note that here the scheduler is not implemented, nor is it possible to define the references as a tensor of zeros. Additionally some versions of bpnetlite require editing the bpnet file in the bin folder of your environment (should you work with conda). The 'torch.load' function needs the extra statement 'weights_only=False'.
 
+---
 # Handler
-This directory was primarily written and editted by J. Normann.
+This directory was written and editted by J. Normann.
