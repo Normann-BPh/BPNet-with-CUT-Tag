@@ -1,4 +1,5 @@
 # GC-Matched Peak and Signal Preprocessing for BPNet-lite
+
 This subfolder contains a set of Python scripts 
 The goal is to do RPM normalization per strand, then normalization per chromosome to get values between (0,1) and finally, if needed, replace the nans with zeros
 Also, there is a file able to concatenate two or more BED file peak regions from Tfs and create one that also contains gc matched control regions with sliding windows. 

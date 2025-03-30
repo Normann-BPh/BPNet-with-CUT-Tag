@@ -1,4 +1,5 @@
 # Project description
+
 This projects objective was three fold; 
 (1) to train [bpnet-lite](https://github.com/jmschrei/bpnet-lite) on CUT&Tag data for TF binding predictions, 
 (2) to interpret the trained model and extract predictive motifs, and 
