@@ -131,6 +131,15 @@ random_state = None
 If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
 - add 'scheduler' as a variable after 'optimizer' in line 314
 - add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
+We also added an argument to easily define where the log and model are saved during training. To use this modify the bpnet.py file mentioned above as follows.
+- add 'folder' as a variable after 'optimizer' (or 'scheduler') in line 314
+- change the following lines to
+	- 469:    self.logger.save("{}/{}.log".format(folder,self.name))
+	- 473:    torch.save(self, "{}/{}.torch".format(folder,self.name))
+	- 490:    torch.save(self, "{}/{}.final.torch".format(folder,self.name))
+- add the following lines to save both profile losses after 490:
+	- 491:    numpy.save('{}/mnll_loss.npy'.format(folder,self.name),valid_loss_all)
+	- 492:    numpy.save('{}/profile_loss.npy'.format(folder,self.name),profile_loss_all)
 Alternatively you can copy `bpnet.py` into the bpnetlite directory. 
 
 # Command Line Tools

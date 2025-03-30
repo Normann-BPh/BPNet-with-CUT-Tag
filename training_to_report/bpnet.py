@@ -313,7 +313,7 @@ class BPNet(torch.nn.Module):
 		return y_profile, y_counts
 
 
-	def fit(self, training_data, optimizer, scheduler, X_valid=None, X_ctl_valid=None, 
+	def fit(self, training_data, optimizer, scheduler, folder, X_valid=None, X_ctl_valid=None, 
 		y_valid=None, max_epochs=100, batch_size=64, validation_iter=100, 
 		early_stopping=None, verbose=True):
 		"""Fit the model to data and validate it periodically.
@@ -466,11 +466,11 @@ class BPNet(torch.nn.Module):
 							measures['count_mse'].mean().item(),
 							(valid_loss < best_loss).item()])
 						
-						self.logger.save("{}_report_r/{}.log".format(self.name[:self.name.find('_')],self.name))
+						self.logger.save("{}/{}.log".format(folder,self.name))
 						
                         
 						if valid_loss < best_loss:
-							torch.save(self, "{}_report_r/{}.torch".format(self.name[:self.name.find('_')],self.name))
+							torch.save(self, "{}/{}.torch".format(folder,self.name))
 							best_loss = valid_loss
 							early_stop_count = 0
 						else:
@@ -487,9 +487,9 @@ class BPNet(torch.nn.Module):
 			valid_loss_all.append(valid_loss)
 			profile_loss_all.append(profile_loss_)
 			
-		torch.save(self, "{}_report_r/{}.final.torch".format(self.name[:self.name.find('_')],self.name))
-		numpy.save('{}_report_r/mnll_loss.npy'.format(self.name[:self.name.find('_')],self.name),valid_loss_all)
-		numpy.save('{}_report_r/profile_loss.npy'.format(self.name[:self.name.find('_')],self.name),profile_loss_all)
+		torch.save(self, "{}/{}.final.torch".format(folder,self.name))
+		numpy.save('{}/mnll_loss.npy'.format(folder,self.name),valid_loss_all)
+		numpy.save('{}/profile_loss.npy'.format(folder,self.name),profile_loss_all)
 
 	@classmethod
 	def from_chrombpnet_lite(cls, filename):

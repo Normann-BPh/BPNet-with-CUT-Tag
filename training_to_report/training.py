@@ -14,10 +14,20 @@ device = torch.device('cuda')
 print('Using device:', torch.cuda.get_device_name())
 
 # user input defines the TF the model is trained for # 
-TF_to_train = input(' TF to train for. "HES1", "HEYL", "MYOD1" or "MYOG".\n Multi not supported.\n Press "enter" to choose "HES1": ')
+TF_to_train = input(' TF to train for. "HES1", "HEYL", "MYOD1" or "MYOG".\n For cooperative training enter "coop".\n Press "enter" to choose "HES1": ')
 if TF_to_train == '':
     TF_to_train = 'HES1'
+elif TF_to_train == 'coop':
+    coop = True
+    pair = input('Enter "H2" to train for the HES1-HEYL pair, or "M2" for the MYOD1-MYOG pair: ')
+    if pair == 'H2':
+        TF_to_train = 'HES1_HEYL'
+    else:
+        TF_to_train = 'MYOD1_MYOG'
 print('Using: ', TF_to_train)
+
+# set the folder to save model and loss in #
+folder = '{}_report'.format(TF_to_train)
 
 # paths to peak file (loci), genome (sequences), count/profile (signals) #
 loci = 'BPNet_files/peaks/gc_matched_controls_{}_sliding_windows_peaks.bed'.format(TF_to_train)
@@ -32,13 +42,16 @@ chr8	27505053	27505584
 chr8	27505584	27506115
 '''
 
-sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa'
-'''
-a human genome, consistent of A, C, G and T. 
-'''
-
-signals = ['BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_pos.bw'.format(TF_to_train),
-            'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_neg.bw'.format(TF_to_train)]
+if coop == True:
+    signals = ['BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_pos.bw'.format(TF_to_train[:TF_to_train.find('_')]),
+                'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_neg.bw'.format(TF_to_train[:TF_to_train.find('_')]),
+                'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_pos.bw'.format(TF_to_train[TF_to_train.find('_')+1:]),
+                'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_neg.bw'.format(TF_to_train[TF_to_train.find('_')+1:])]
+    add = 2
+else:
+    signals = ['BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_pos.bw'.format(TF_to_train),
+                'BPNet_files/BigWig_files/Normalized_per_strand_norm_{}_all_neg.bw'.format(TF_to_train)]
+    add = 0
 '''
 for each strand a seperate file. 
 contains the start and its end of a peak with the respective read count.
@@ -80,7 +93,7 @@ ignore = list('BDEFHIJKLMNOPQRSUVWXYZ')
     ## BPNet ##
 n_filters = 64
 n_layers = 9 # number of dilated residual layers; defines receptive field; 2^(n_layers+1)
-n_outputs = 2 # output is positive and negative strand
+n_outputs = 2 + add # output is positive and negative strand
 n_control_tracks = 0 # no controls are used
 alpha = 0.1 # close to no importance of the count-loss
 profile_output_bias = False # to stabilize attribution
@@ -162,7 +175,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=mode, fac
 predictions_probability = model.fit(training_data=train_data, optimizer=optimizer, X_valid=X_valid, X_ctl_valid=None, 
                                     y_valid=y_valid, 
                                     max_epochs=max_epochs, batch_size=batch_size_f, validation_iter=validation_iter,
-                                    early_stopping=early_stopping, verbose=True, scheduler=scheduler)
+                                    early_stopping=early_stopping, verbose=True, scheduler=scheduler, folder=folder)
 '''
 Default fit:
     training_data, optimizer, X_valid=None, X_ctl_valid=None, 
@@ -173,6 +186,16 @@ the argument 'scheduler' is added by us.
 the bpnet.py file of the bpnetlite package has to be edited to use this feature.
     add 'scheduler' as a variable after 'optimizer' in line 314
     add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
+the argument 'folder' is added by us.
+the bpnet.py file of the bpnetlite package has to be edited to use this feature
+    add 'folder' as a variable after 'optimizer' (or 'scheduler') in line 314
+    change the following lines to
+        469:    self.logger.save("{}/{}.log".format(folder,self.name))
+        473:    torch.save(self, "{}/{}.torch".format(folder,self.name))
+        490:    torch.save(self, "{}/{}.final.torch".format(folder,self.name))
+    add the following lines to save both profile losses after 490:
+		numpy.save('{}/mnll_loss.npy'.format(folder,self.name),valid_loss_all)
+		numpy.save('{}/profile_loss.npy'.format(folder,self.name),profile_loss_all)
 '''
 
 # print last learning rate #
