@@ -14,3 +14,6 @@ python loss_valid_vs_train.py
 - **Outputs**: a graph depicting the MNLL and training loss
 
 The y-axis is broken for the losses of HES1 and HEYL since they start several magnitudes then most of their loss values end up at.
+
+# Handler
+Both, Miguel Rius-Lutz and Julius Normann, are the authors of this directory.  

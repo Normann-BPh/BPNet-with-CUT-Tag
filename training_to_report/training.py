@@ -13,6 +13,8 @@ from tangermeme.io import extract_loci
 device = torch.device('cuda')
 print('Using device:', torch.cuda.get_device_name())
 
+coop = False
+
 # user input defines the TF the model is trained for # 
 TF_to_train = input(' TF to train for. "HES1", "HEYL", "MYOD1" or "MYOG".\n For cooperative training enter "coop".\n Press "enter" to choose "HES1": ')
 if TF_to_train == '':
@@ -40,6 +42,11 @@ chr1	940890	941760
 chr13	37744316	37745096
 chr8	27505053	27505584
 chr8	27505584	27506115
+'''
+
+sequences = 'BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa'
+'''
+a human genome, consistent of A, C, G and T. 
 '''
 
 if coop == True:
@@ -186,6 +193,7 @@ the argument 'scheduler' is added by us.
 the bpnet.py file of the bpnetlite package has to be edited to use this feature.
     add 'scheduler' as a variable after 'optimizer' in line 314
     add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
+---------------------------------------------------------------------------------
 the argument 'folder' is added by us.
 the bpnet.py file of the bpnetlite package has to be edited to use this feature
     add 'folder' as a variable after 'optimizer' (or 'scheduler') in line 314

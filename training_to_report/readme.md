@@ -131,6 +131,7 @@ random_state = None
 If you would like to use a scheduler to update the learning rate of your chosen optimizer the argument 'scheduler' needs to be added to the bpnet.fit function in the bpnet.py file of the bpnetlite package. We changed the following two lines:
 - add 'scheduler' as a variable after 'optimizer' in line 314
 - add 'scheduler.step(valid_loss)' in line 481; mind the correct spacing
+# Saving model state and log in custom folder.
 We also added an argument to easily define where the log and model are saved during training. To use this modify the bpnet.py file mentioned above as follows.
 - add 'folder' as a variable after 'optimizer' (or 'scheduler') in line 314
 - change the following lines to
