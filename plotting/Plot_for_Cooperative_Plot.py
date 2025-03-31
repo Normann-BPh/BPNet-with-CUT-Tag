@@ -15,7 +15,7 @@ from tangermeme.utils import one_hot_encode
 random.seed(42)
 
 # Choose which pair to use:
-use_pair = 'HES1_HEYL'  # or 'HES1_HEYL'
+use_pair = 'HES1_HEYL'  
 
 # Motif definitions
 motifs_HES1_HEYL = [ ('HEYL_motif_pos','GACACGTGCC'), ('HES1_motif_pos','GGCACGTGGC')]
@@ -62,8 +62,7 @@ elif use_pair == 'HES1_HEYL':
     gc_controls = gc_controls_HES1_HEYL
     model_file = 'HES1_HEYL_Model.final.torch'
     chrom, start, end = 'chr17', 15671768, 15675319
-else:
-    raise ValueError("Invalid option for use_pair")
+
 
 pickle_filename = f'final_strings_{use_pair}.pkl'
 
@@ -97,12 +96,8 @@ def screen_gc_controls_by_profile(control_peak_file, fasta_file, model, threshol
         region_start = region_center - total_length_peak // 2
         region_end = region_start + total_length_peak
 
-        try:
-            seq = genome[chrom].seq[region_start:region_end].upper()
-        except KeyError:
-            continue
-        if len(seq) != total_length_peak:
-            continue
+        seq = genome[chrom].seq[region_start:region_end].upper()
+   
 
         encoded = one_hot_encode(str(seq)).unsqueeze(0).to(device)
 
@@ -160,12 +155,6 @@ good_sequences, good_regions = screen_gc_controls_by_profile(
 )
 
 
-# with open(f"{use_pair}_low_signal_controls.pkl", "wb") as f:
-#     pickle.dump({
-#         "sequences": good_sequences,
-#         "regions": good_regions
-#     }, f)
-
 # Generate and save sequences
 final_strings = create_coop_regions(
     distances=distances,
@@ -211,6 +200,7 @@ colors = {
     "MYOD1_MYOG": ["#9E8930"],
 }
 profiles = []
+
 for d in distances:
     data = np.load(f"Coop/{d}_{use_pair}_y_profile.npz")
     profile = data['arr_0']
