@@ -7,6 +7,10 @@ This repository is a collection of our scirpts to plot our generated data.
 ### `Plot_for_Cooperative_Plot.py.`
 **Purpose**: This script inserts the Motifs into regions of low to no prediction of signal and graphs the resulting predictions
 
+**Usage**:
+```bash
+python Plot_for_Cooperative_Plot.py
+```
  **Inputs**: it takes strings of the motifs as input and uses the model together with a gc matched signal and the reference genome to predict low regions
  It then takes a region from the test chromosomes and inserts the motif strings at different distances. It then plots the resulting arrays
 
