@@ -12,12 +12,13 @@ from bpnetlite import BPNet
 from tangermeme.predict import predict
 from tangermeme.utils import one_hot_encode
 
-random.seed(42)
+random.seed(11)
 
 # Choose which pair to use:
-use_pair = 'HES1_HEYL'  
+tf_pair = 'HES1_HEYL'  
 
-# Motif definitions
+# Motifs (JASPAR)
+
 motifs_HES1_HEYL = [ ('HEYL_motif_pos','GACACGTGCC'), ('HES1_motif_pos','GGCACGTGGC')]
 motifs_MYOD1_MYOG = [ ('MYOG_motif_pos','CAGCAGCTGCTG'), ('MYOD1_motif_pos','CAGCACCTGTCCC')]
 
@@ -36,27 +37,27 @@ bigwig_files_MYOD1_MYOG = [
     "BPNet_files/BigWig_files/MYOG_all_pos.bw"
 ]
 
-# GC-matched control files
+# GC-matched controls
+
 gc_controls_HES1_HEYL = 'gc_controls_HES1_HEYL_peaks.bed'
 gc_controls_MYOD1_MYOG = 'gc_controls_MYOD1_MYOG_peaks.bed'
 
+# Genome FASTA
 
-
-# Genome fasta
 fasta_file = "BPNet_files/reference_genome/BPNet_Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
 
-# Distances to use
+# Distances
 distances = [200, 150, 100, 50, 25, 10]
 total_length_peak = 1002
 
 # Use configuration depending on selected pair
-if use_pair == 'MYOD1_MYOG':
+if tf_pair == 'MYOD1_MYOG':
     motifs = motifs_MYOD1_MYOG
     bigwig_files = bigwig_files_MYOD1_MYOG
     gc_controls = gc_controls_MYOD1_MYOG
     model_file = 'MYOD1_MYOG_Model.final.torch'
     chrom, start, end = 'chr4', 131816956, 131824307
-elif use_pair == 'HES1_HEYL':
+elif tf_pair == 'HES1_HEYL':
     motifs = motifs_HES1_HEYL
     bigwig_files = bigwig_files_HES1_HEYL
     gc_controls = gc_controls_HES1_HEYL
@@ -64,13 +65,12 @@ elif use_pair == 'HES1_HEYL':
     chrom, start, end = 'chr17', 15671768, 15675319
 
 
-pickle_filename = f'final_strings_{use_pair}.pkl'
+pickle_filename = f'final_strings_{tf_pair}.pkl'
 
 # Counting function for ATGC positions
 def counting(sequence):
     sequence = sequence.upper()
     return sequence.count('A') + sequence.count('T') + sequence.count('G') + sequence.count('C')
-
 
 
 def screen_gc_controls_by_profile(control_peak_file, fasta_file, model, threshold=10, total_length_peak=1002, max_controls=50, required_chrom=None):
@@ -183,8 +183,8 @@ device = torch.device('cuda')
 # Predict
 for distance, examples in encoded_dict.items():
     y_profile, y_counts = predict(model=model, X=examples, batch_size=64, device=device, verbose=True)
-    np.savez_compressed(f'Coop/{distance}_{use_pair}_y_profile.npz', y_profile)
-    np.savez_compressed(f'Coop/{distance}_{use_pair}_y_counts.npz', y_counts)
+    np.savez_compressed(f'Coop/{distance}_{tf_pair}_y_profile.npz', y_profile)
+    np.savez_compressed(f'Coop/{distance}_{tf_pair}_y_counts.npz', y_counts)
 
 # Plotting
 plt.rcParams.update({
@@ -202,7 +202,7 @@ colors = {
 profiles = []
 
 for d in distances:
-    data = np.load(f"Coop/{d}_{use_pair}_y_profile.npz")
+    data = np.load(f"Coop/{d}_{tf_pair}_y_profile.npz")
     profile = data['arr_0']
     profile[profile < 0] = 0
     profiles.append(profile)
@@ -211,7 +211,7 @@ fig, axes = plt.subplots(len(distances), 1, figsize=(10, 2 * len(distances)), sh
 for i, d in enumerate(distances):
     ax = axes[i]
     track = profiles[i][0, 0, :]
-    ax.plot(track, color=colors[use_pair][0])
+    ax.plot(track, color=colors[tf_pair][0])
 
     full_seq = final_strings[d]
     motif_positions = {}
@@ -222,8 +222,8 @@ for i, d in enumerate(distances):
             motif_end = motif_start + counting(motif)
             motif_positions[name] = (motif_start, motif_end)
 
-    bar_y = -0.05  # Slightly above baseline
-    bar_height = 0.04
+    bar_y = -0.05  # Slightly below baseline
+    bar_height = 0.04 #needs to be adjusted, weird behaivior with y_lim
 
     if len(motif_positions) == 2:
         all_positions = list(motif_positions.values())
