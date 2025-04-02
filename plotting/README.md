@@ -16,9 +16,6 @@ python Plot_for_Cooperative_Plot.py
 
  Other plots from the Results used the same plotting structure
 
-# Handler
-Both, Miguel Rius-Lutz and Julius Normann, are the authors of this directory.  
-
 ### `loss_valid_vs_train.py`
 **Purpose**: This script graphs the loss of the recorded profile loss, training and validation. On how to access those, consulte the 'trainig_to_report' directory.
 
