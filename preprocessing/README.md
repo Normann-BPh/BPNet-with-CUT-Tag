@@ -67,5 +67,4 @@ python sliding_windows_final.py
 - Final BED file with all regions split into uniform sliding windows
 
 ---
-# Handler
 This directory was written and editted by Miguel Rius-Lutz.
