@@ -6,6 +6,7 @@ import pybedtools
 import random
 from Bio import SeqIO
 
+random.seed(11)
 
 
 
@@ -18,6 +19,7 @@ def naming_final_file(peak_file, output_prefix, use_single_peak_file=False, gc_m
             merged_prefix = '_'.join([pf.split('/')[-1].replace('_peaks.bed','') for pf in peak_file])
             output_bed = f"{output_prefix}_{merged_prefix}_sliding_windows_peaks.bed"
     else:
+        # This is the same, only that there will be no gc matched regions added
         if use_single_peak_file:
             output_bed = f"{peak_file.split('/')[-1].replace('_peaks.bed', '')}_sliding_windows_peaks.bed"
         else:
@@ -93,7 +95,6 @@ def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dic
 
     if use_single_peak_file == False:
         peak_merge_prefix = 'merged_tfs'
-        merged_bed = f"{peak_merge_prefix}_{''.join([peak_file.split('/')[-1].replace('peaks.bed', '') for peak_file in peak_file_])}peaks.bed"
         df_peaks = merge_peak_files(peak_file_, merged_bed)
     
     else:
@@ -113,7 +114,7 @@ def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dic
         gc_content = count / len(sequence)
         gc_cont_list.append(gc_content)
     
-    gc_min = np.min(gc_cont_list)
+    gc_min = np.min(gc_cont_list) # Range of GC is used to pick from
     gc_max = np.max(gc_cont_list)
     
     #----find regions with similar range of gc---
@@ -165,7 +166,7 @@ def generate_gc_matched_regions(fasta_file, peak_file_, signals, chrom_sizes_dic
                 rand_gc = count / len(rand_seq)
 
                 # Only accept GC-matched regions with low signal count
-                if gc_min <= rand_gc <= gc_max and counts_per_peak(signals, chrom, rand_start, rand_end) < 100:
+                if gc_min < rand_gc < gc_max and counts_per_peak(signals, chrom, rand_start, rand_end) < 100:
                     control_regions.append((chrom, rand_start, rand_end))
                     selected_regions.add((chrom, rand_start, rand_end))
                 break  # Exit the inner loop if a valid region is found
