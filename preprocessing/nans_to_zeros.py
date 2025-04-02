@@ -4,11 +4,11 @@ import pyBigWig
 
 def nans_to_zeros_bw(signals, output_bw_prefix="no_nans"):
 
-   # Reads BigWig files and fills missing NaNs with zeros (as intervals)
+   # Reads BigWig files and fills missing nans with 0.0 (as intervals)
 
 
     for bw_path in signals:
-        output_bw_path = f"{output_bw_prefix}_{os.path.basename(bw_path)}" #creating a new output path filename, while keeping the previous one
+        output_bw_path = f"{output_bw_prefix}_{bw_path.split('/')[-1]}" #creating a new output path 
 
         with pyBigWig.open(bw_path) as bw_in, pyBigWig.open(output_bw_path, "w") as bw_out:
             chroms = bw_in.chroms()
@@ -22,7 +22,7 @@ def nans_to_zeros_bw(signals, output_bw_prefix="no_nans"):
                 last_end = 0
 
                 for start, end, value in interval_values:
-                    # Fill gaps with zeros if there's a gap between intervals
+                    # Fill gaps with zeros from start of chromosome
                     if start > last_end:
                         start_list.append(last_end)
                         end_list.append(start)
@@ -33,9 +33,9 @@ def nans_to_zeros_bw(signals, output_bw_prefix="no_nans"):
                     end_list.append(end)
                     value_list.append(value)
 
-                    last_end = end  # Update 
+                    last_end = end 
 
-                # Ensure coverage till the chromosome end
+                # fill gaps with zeros until end of chromosome
                 if last_end < chrom_length:
                     start_list.append(last_end)
                     end_list.append(chrom_length)
@@ -45,10 +45,10 @@ def nans_to_zeros_bw(signals, output_bw_prefix="no_nans"):
 
                 chrom_list = [chrom] * len(start_list)
 
-                # Add entries to BigWig
+                # add entries to biwig
                 bw_out.addEntries(chrom_list, start_list, ends=end_list, values=value_list)
 
-        print(f"BigWig with NaNs saved to: {output_bw_path}")
+        print(f"BigWig with nans saved as: {output_bw_path}")
 
 
 signals = ['BPNet_files/BigWig_files/HEYL_all_neg.bw', 'BPNet_files/BigWig_files/HEYL_all_pos.bw']
