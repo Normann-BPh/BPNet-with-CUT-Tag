@@ -16,7 +16,7 @@ python loss_valid_vs_train.py
 
 The y-axis is broken for the losses of HES1 and HEYL since they start several magnitudes greater then most of their loss values end up at.
 
-### `Plot_for_Cooperative_Plot.py.`
+### `Plotting_Coop_plot.py`
 **Purpose**: This script inserts the Motifs into regions of low to no prediction of signal and graphs the resulting predictions
 
 **Usage**:
