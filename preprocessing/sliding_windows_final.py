@@ -274,7 +274,7 @@ with pyBigWig.open(bigwig_file) as bw:
 #---- calling the function ---- #
 output_bed = naming_final_file(peak_file_s, output_prefix, use_single_peak_file=use_single_peak_file, gc_matched=gc_matched)
 generate_sliding_windows(peak_file_s, fasta_file, output_bed, chrom_sizes_dict, signals, stride=1000, use_single_peak_file = use_single_peak_file, gc_matched = gc_matched)
-
+# For the future it should create the sliding windows first and then apply gc matched regions
 
 
 
