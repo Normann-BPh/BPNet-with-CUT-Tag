@@ -140,8 +140,8 @@ We also added an argument to easily define where the log and model are saved dur
 	- 473:    torch.save(self, "{}/{}.torch".format(folder,self.name))
 	- 490:    torch.save(self, "{}/{}.final.torch".format(folder,self.name))
 - add the following lines to save both profile losses after 490:
-	- 491:    numpy.save('{}/mnll_loss.npy'.format(folder,self.name),valid_loss_all)
-	- 492:    numpy.save('{}/profile_loss.npy'.format(folder,self.name),profile_loss_all)
+	- 491:    numpy.save('{}/mnll_loss.npy'.format(folder),valid_loss_all)
+	- 492:    numpy.save('{}/profile_loss.npy'.format(folder),profile_loss_all)
 Alternatively you can copy `bpnet.py` into the bpnetlite directory. 
 ---
 # Command Line Tools
